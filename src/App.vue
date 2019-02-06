@@ -1,17 +1,30 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-ons-navigator swipeable
+    :page-stack="pageStack"
+    :pop-page="goBack"
+  ></v-ons-navigator>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'app',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      pageStack: []
+    }
+  },
+  methods: {
+    goBack() {
+      this.$router.push({ name: this.$route.matched[this.$route.matched.length - 2].name });
+    }
+  },
+  created() {
+    
+    const mapRouteStack = route => this.pageStack = route.matched.map(m => m.components.default);
+    
+    mapRouteStack(this.$route);
+    
+    this.$router.beforeEach((to, from, next) => mapRouteStack(to) && next());
   }
 }
 </script>
